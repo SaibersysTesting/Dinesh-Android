@@ -1,154 +1,69 @@
-package com.dinesh.sqldatabase;
+package com.dinesh.threadservices;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.nio.channels.FileChannel;
 
 public class MainActivity extends AppCompatActivity {
-    DatabaseStudentDetails myDB;
-    EditText editFirstNmae,editLastName, editRollNumber, editEmailId, editGPA, editid;
-    Button   buttonSave;
-    Button buttonView;
-    Button buttonupdate;
-    Button deletebtn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myDB =new DatabaseStudentDetails(this);
-        editid = (EditText)findViewById(R.id.updateid);
-        editFirstNmae = (EditText)findViewById(R.id.firstName);
-        editLastName =(EditText)findViewById(R.id.last);
-        editRollNumber =(EditText)findViewById(R.id.rollNumber);
-        editEmailId= (EditText)findViewById(R.id.emailid);
-        editGPA = (EditText)findViewById(R.id.gpa);
-        buttonSave =(Button)findViewById(R.id.button);
-        buttonView =(Button)findViewById(R.id.button2);
-        deletebtn =(Button)findViewById(R.id.deletebutton);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-
-        buttonupdate =(Button)findViewById(R.id.buttonUpdate);
-        AddData();
-        ViewAll();
-        check();
-        DeleteData();
-
-
-
-    }
-    public void AddData(){
-        buttonSave.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                String name = editFirstNmae.getText().toString().trim();
-                String last = editLastName.getText().toString().trim();
-                String rollNO = editRollNumber.getText().toString().trim();
-                String email = editEmailId.getText().toString().trim();
-                String gpa = editGPA.getText().toString().trim();
-                boolean isInserted = myDB.insertData( name,last,rollNO,email,gpa);
-                if (isInserted == true) {
-                    Toast.makeText(MainActivity.this, "Data Inserted", Toast.LENGTH_LONG).show();
-                }else {
-                    Toast.makeText(MainActivity.this, "Data is  not  Inserted", Toast.LENGTH_LONG).show();
-
-                }
-
-
-            }
-        });
-    }
-    public void DeleteData(){
-        deletebtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Integer deleterows = myDB.deleteData(editid.getText().toString());
-                if (deleterows > 0){
-                    Toast.makeText(MainActivity.this, "Data deletd", Toast.LENGTH_LONG).show();
-                }else {
-                    Toast.makeText(MainActivity.this, "Data is  not  deleted", Toast.LENGTH_LONG).show();
-
-
-                }
-            }
-        });
-    }
-    public void ViewAll(){
-        buttonView.setOnClickListener(new View.OnClickListener() {
-            public static final String TAG = "student data" ;
-
-            @Override
-            public void onClick(View v) {
-
-//               boolean result = myDB.insertData("Dinesh","Pogula","700642649","dineshpogula@gmail.com","4.0");
-                Cursor res =myDB.getAllData();
-
-                StringBuffer buffer = new StringBuffer();
-//                check();
-              if(res.getCount()==0){
-                  showMessage("Error","Nothing found");
-                  return;
-              }
-
-
-                while (res.moveToNext()){
-                    buffer.append("Id :"+res.getString(0)+"\n");
-                    buffer.append("FirstName :"+res.getString(1)+"\n");
-                    buffer.append("LastName :"+res.getString(2)+"\n");
-                    buffer.append("RollNumber :"+res.getString(3)+"\n");
-                    buffer.append("EmailId :"+res.getString(4)+"\n");
-                    buffer.append("GPA :"+res.getString(5)+"\n\n");
-                }
-                showMessage("Student Data",buffer.toString());
-
-//                Log.i(TAG, buffer.toString());
-            }
-        });
-    }
-    public void check(){
-        buttonupdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean isUpdated = myDB.updateData(editid.getText().toString(),editFirstNmae.getText().toString(),editLastName.getText().toString(),
-                        editRollNumber.getText().toString(),editEmailId.getText().toString(),editGPA.getText().toString());
-                if (isUpdated == true) {
-                    Toast.makeText(MainActivity.this, "Data updated", Toast.LENGTH_LONG).show();
-                }else {
-                    Toast.makeText(MainActivity.this, "Data is  not  updated", Toast.LENGTH_LONG).show();
-
-                }
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
 
     }
-    public  void showMessage(String title, String message){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setTitle(title);
-        builder.setMessage(message);
-        builder.show();
-    }
+    public void StartService (View view){
 
+                Intent intent = new Intent(MainActivity.this,MyServices.class);
+                startService(intent);
+
+
+    }
+    public void StopService(View view){
+
+                Intent intent = new Intent(MainActivity.this,MyServices.class);
+                startService(intent);
+
+    }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
